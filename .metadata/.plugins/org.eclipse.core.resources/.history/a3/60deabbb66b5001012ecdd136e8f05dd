@@ -1,0 +1,12 @@
+package com.kh.demo.member.model.service;
+
+
+import org.springframework.stereotype.Service;
+
+import com.kh.demo.member.model.dto.MemberDTO;
+
+@Service
+public interface MemberService {
+	
+	void signUp(MemberDTO member);
+}

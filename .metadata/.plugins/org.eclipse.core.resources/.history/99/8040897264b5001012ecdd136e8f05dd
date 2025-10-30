@@ -1,0 +1,6 @@
+package com.kh.demo.exception;
+
+
+public class GlobalExceptionHandler {
+
+}

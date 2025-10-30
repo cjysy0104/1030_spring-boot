@@ -1,0 +1,5 @@
+package com.example.demo.api.model.dao;
+
+public interface CommentMapper {
+
+}

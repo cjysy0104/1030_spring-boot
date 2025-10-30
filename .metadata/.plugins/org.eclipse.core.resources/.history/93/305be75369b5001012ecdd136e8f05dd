@@ -1,0 +1,5 @@
+package com.kh.demo.exception;
+
+public class IdDuplicateException extends RuntimeException {
+
+}

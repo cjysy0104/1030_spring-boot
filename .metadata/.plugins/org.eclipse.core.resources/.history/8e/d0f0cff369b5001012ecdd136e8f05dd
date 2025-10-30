@@ -1,0 +1,37 @@
+package com.kh.demo.member.model.service;
+
+import org.springframework.stereotype.Service;
+
+import com.kh.demo.exception.IdDuplicateException;
+import com.kh.demo.member.model.dao.MemberMapper;
+import com.kh.demo.member.model.dto.MemberDTO;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class MemberServiceImpl implements MemberService {
+
+	private final MemberMapper memberMapper;
+	
+	@Override
+	public void signUp(MemberDTO member) {
+
+		// 유효성검사
+		// 아이디 중복 검사
+		int count =  memberMapper.countByMemberId(member.getMemberId());
+		
+		if(1 == count) {
+			throw new IdDuplicateException("이미 존재하는 아이디입니다.");
+		}
+		
+		
+		// 비밀번호 암호화
+		
+		// ROLE주기
+		
+		// 매퍼 호출
+
+	}
+
+}

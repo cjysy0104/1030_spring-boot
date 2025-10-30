@@ -1,0 +1,6 @@
+package com.kh.start.member.model.service;
+
+public interface MemberService {
+	
+	void signUp(MemberDTO member);
+}

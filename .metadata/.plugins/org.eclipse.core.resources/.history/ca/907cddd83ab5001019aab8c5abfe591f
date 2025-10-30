@@ -1,0 +1,13 @@
+package com.example.demo;
+
+public class StudyController {
+
+	/* Spring Setter
+	 * 
+	 * 특정 기능에 필요한 의존성 라이브러리들을 한번에 관리 할 수 있는 개념
+	 * 
+	 * 예) spring-boot-tart-web: 웹 애플리케이션 개발에 필요한 의존성만 모아놨음 
+	 * 
+	 * 
+	 */
+}

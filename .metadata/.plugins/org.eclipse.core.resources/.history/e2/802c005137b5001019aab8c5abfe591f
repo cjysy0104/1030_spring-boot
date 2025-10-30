@@ -1,0 +1,17 @@
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class StudyApplication {
+
+	/*
+	 * 1. AutoConfiguration(자동 구성)
+	 */
+	
+	public static void main(String[] args) {
+		SpringApplication.run(StudyApplication.class, args);
+	}
+
+}

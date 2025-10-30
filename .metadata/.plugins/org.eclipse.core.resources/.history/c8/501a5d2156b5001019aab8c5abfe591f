@@ -1,0 +1,8 @@
+package com.kh.member;
+
+public class MemberDTO {
+
+	private String memberID;
+	private String memberPwd;
+	private String memberName;
+}

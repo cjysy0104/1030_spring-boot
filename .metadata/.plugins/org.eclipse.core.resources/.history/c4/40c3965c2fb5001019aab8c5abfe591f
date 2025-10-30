@@ -1,0 +1,10 @@
+package com.example.demo.api.model.service;
+
+public class ApiService {
+
+	public String getFoods(int pageNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

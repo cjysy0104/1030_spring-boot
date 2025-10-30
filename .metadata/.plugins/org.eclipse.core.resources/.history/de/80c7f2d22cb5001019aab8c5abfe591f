@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: demo
+  datsource:
+  	url: jdbc:oracle:thin:@115.90.212.20:10000:XE
+	username: CJY19
+	password: CJY191234
+	driver-class-name: oracle.jdbc.driver.OracleDriver
+
+  

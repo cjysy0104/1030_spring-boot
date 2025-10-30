@@ -1,0 +1,29 @@
+package com.kh.start.configuration;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+public class SecurityConfigure {
+
+	// 우리의 문제점: 시큐리티의 formLogin필터가 자꾸 인증이 안됐다고 회원가입 못하게 함 => formLogin 안 쓸래 => formLogin을 제외한 필터체인을 빈으로 만들어 객체 반환
+	// 해결방법: form로그인 안쓸래 하고 filterChain을 빈으로 등록
+	
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+		//return httpSecurity.formLogin().disable().build();
+		/*
+		return httpSecurity.formLogin(new Customizer<FormLoginConfigurer<HttpSecurity>>() {
+			
+			@Override
+			public void customize(FormLoginConfigurer<HttpSecurity> t) {
+				t.disable();
+			}
+		}).build();
+		*/
+		return httpSecurity.formLogin(AbstractHttpConfigurer::disable).build();
+	}
+}
