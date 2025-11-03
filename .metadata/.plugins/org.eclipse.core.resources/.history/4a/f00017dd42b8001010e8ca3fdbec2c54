@@ -1,0 +1,39 @@
+package com.kh.auth.model.service;
+
+import java.util.Collections;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import com.kh.auth.model.vo.CustomUserDetails;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class UserDetailsServiceImpl implements UserDetailsService{
+	// AuthManager가 실질적으로 사용자의 정보를 조회할 떄 메서드를 호출하는 클래스
+	
+	private final MemberMapper mapper;
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		MemberDTO user = mapper.loadUser(username);
+		
+		log.info("test:{}", user);
+		
+		if(user == null) {
+			throw new UsernameNotFoundExceiption("유저이름없음에러임");
+		}
+		
+		return CustomUserDetails.builder().username(user.getMemberId())
+										  .password(user.getMemberPwd())
+										  .memberName(user.getMemberName())
+										  .authorities(Collections.singletonList(new SimpleGrantedAuthority(user.getRole))))
+										  .build();
+	}
+
+	
+}

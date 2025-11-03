@@ -1,12 +1,21 @@
 package com.kh.demo.member.model.service;
 
+import java.util.Map;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.kh.demo.auth.model.vo.CustomUserDetails;
+import com.kh.demo.exception.CustomAuthenticationException;
 import com.kh.demo.exception.IdDuplicateException;
 import com.kh.demo.member.model.dao.MemberMapper;
+import com.kh.demo.member.model.dto.ChangePasswordDTO;
 import com.kh.demo.member.model.dto.MemberDTO;
 import com.kh.demo.member.model.vo.MemberVO;
+import com.kh.demo.token.model.dao.TokenMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberServiceImpl implements MemberService {
 
 	private final MemberMapper memberMapper;
+	private final TokenMapper tokenMapper;
 	private final BCryptPasswordEncoder passwordEncoder;
 	
 	@Override
@@ -32,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
 		
 		
 		// 비밀번호 암호화
-//		String encodedPwd = passwordEncoder.encode(member.getMemberPwd());
+		String encodedPwd = passwordEncoder.encode(member.getMemberPwd());
 		
 		// ROLE주기
 		MemberVO memberBuilder = MemberVO.builder()
@@ -47,4 +57,55 @@ public class MemberServiceImpl implements MemberService {
 		log.info("사용자 등록 성공: {}", memberBuilder);
 	}
 
+	@Override
+	public void changePassword(ChangePasswordDTO password) {
+
+		// 현재 비밀번호가 맞는지 검증 ==> passwordEncoder.matches(평문, 암호문)
+		// Authentication에서 현재 인증된 사용자의 정보 뽑아오기
+		Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
+		CustomUserDetails user = (CustomUserDetails)auth.getPrincipal();
+		
+		String currentPassword = password.getCurrentPassword();
+		String encodedPassword = user.getPassword();
+		if(!passwordEncoder.matches(currentPassword, encodedPassword)) {
+			throw new CustomAuthenticationException("일치하지 않는 비밀번호");
+		}
+		// 현재 비밀번호가 맞다면 새 비밀번호를 암호화
+		String newPassword = passwordEncoder.encode(password.getNewPassword());
+		// UPDATE BOOT_MEMBER MEMBER_PWD = "newpassword" WHERE MEMBER_ID = "사용자ID"
+		
+		Map<String, String> changeRequest = Map.of("memberId", user.getUsername(),
+												  "newPassword", newPassword);
+		
+		memberMapper.changePassword(changeRequest);
+	}
+	
+	
+
+	@Override
+	@Transactional
+	public void deleteByPassword(String password) {
+
+//		// 사용자가 입력한 비밀번호가 DB에 저장된 비밀번호 암호문이 맞는지 검증
+//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//		CustomUserDetails user = (CustomUserDetails)auth.getPrincipal();
+//		// 검증이 맞다면
+//		if(!passwordEncoder.matches(password, user.getPassword())) {
+//			throw new CustomAuthenticationException("비밀번호가 일치하지 않습니다.");
+//		}
+//		// DELETE FROM BOOT_MEMBER WHERE MEMBER_ID = 사용자 아이디
+		CustomUserDetails user = validatePassword(password);
+		tokenMapper.deleteToken(user.getUsername());
+		memberMapper.deleteByPassword(validatePassword(password).getUsername());
+	}
+
+	private CustomUserDetails validatePassword(String password) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		CustomUserDetails user = (CustomUserDetails)auth.getPrincipal();
+		// 검증이 맞다면
+		if(!passwordEncoder.matches(password, user.getPassword())) {
+			throw new CustomAuthenticationException("비밀번호가 일치하지 않습니다.");
+		}
+		return user;
+	}
 }

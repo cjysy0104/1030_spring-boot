@@ -1,0 +1,77 @@
+package com.kh.demo.token.model.service;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import com.kh.demo.token.model.dao.TokenMapper;
+import com.kh.demo.token.model.vo.RefreshToken;
+import com.kh.demo.token.util.JwtUtil;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class TokenService {
+
+	private final JwtUtil tokenUtil;
+	private final TokenMapper tokenMapper;
+	
+	
+	// 인증에 성공했을 떄
+	// JwtUtil에 정의해놓은
+	// getAccessToken method 호출
+	// getRefreshToken method 호출
+	// RefreshToken의 경우 DB의 Token 테이블에 만들어진 Token을 INSERT
+	// 두 개를 어디다 고이 이쁘게 담아서 AuthServiceImpl의 login메서드로 반환
+	
+	public Map<String, String> generateToken(String username) {
+		
+//		String accessToken = tokenUtil.getAccessToken(username);
+//		String refreshToken = tokenUtil.getRefreshToken(username);
+//		log.info("token {}, {}", accessToken, refreshToken);
+		
+		Map<String, String> tokens = createTokens(username);
+		
+//		RefreshToken token = RefreshToken.builder()
+//										 .token(refreshToken)
+//										 .username(username)
+//										 .expiration(System.currentTimeMillis() + 360000L * 72)
+//										 .build();
+		
+//		tokenMapper.saveToken(token);
+//		Map<String, String> tokens = new HashMap<>();
+//		tokens.put("accessToken", accessToken);
+//		tokens.put("refreshToken", refreshToken);
+
+		saveToken(tokens.get("refreshToken"), username);
+		
+		return tokens;
+
+	}
+	
+	private Map<String, String> createTokens(String username){
+	    String accessToken = tokenUtil.getAccessToken(username);
+	    String refreshToken = tokenUtil.getRefreshToken(username);
+	    Map<String, String> tokens = new HashMap();
+	    tokens.put("accessToken", accessToken);
+	    tokens.put("refreshToken", refreshToken);
+	    return tokens;
+	}
+
+	private void saveToken(String refreshToken, String username) {
+	    RefreshToken token = RefreshToken.builder()
+	            .token(refreshToken)
+	            .username(username)
+	            .expiration(System.currentTimeMillis() + 3600000L * 72)
+	            .build();
+
+	    tokenMapper.saveToken(token);
+	}
+
+	
+	
+}

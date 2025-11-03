@@ -1,0 +1,22 @@
+package com.kh.exception;
+
+public class UsernameNotFoundException extends RuntimeException {
+
+	public UsernameNotFoundException(String message) {
+		super(message);
+	}
+}
+
+
+/*
+ * 
+ * GlobalExceptionHandler 에 추가
+ * 
+@ExceptionHandler(UsernameNotFoundException.class)
+public ResponseEntity<?> handlerUsernameNotFound(UsernameNotFoundException e){
+    Map<String, String> error = new HashMap<>();
+    error.put("error-message", e.getMessage());
+    return ResponseEntity.badRequest().body(error);
+}
+
+ */

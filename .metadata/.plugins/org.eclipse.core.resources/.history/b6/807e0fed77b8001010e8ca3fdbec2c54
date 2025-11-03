@@ -1,0 +1,12 @@
+package com.kh.demo.board.model.dto;
+
+import lombok.Setter;
+
+@getter
+@Setter
+
+public class BoardDTO {
+
+	private Long boardNo;
+	private String boardTitle;
+}

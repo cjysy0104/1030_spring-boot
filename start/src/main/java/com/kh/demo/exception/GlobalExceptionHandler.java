@@ -14,6 +14,21 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	@ExceptionHandler(CustomAuthenticationException.class)
+	public ResponseEntity<?> handlerCustomAuthentication(CustomAuthenticationException e){
+	    Map<String, String> error = new HashMap<>();
+	    error.put("error-message", e.getMessage());
+	    return ResponseEntity.badRequest().body(error);
+	}
+	
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ResponseEntity<?> handlerUsernameNotFound(UsernameNotFoundException e){
+	    Map<String, String> error = new HashMap<>();
+	    error.put("error-message", e.getMessage());
+	    return ResponseEntity.badRequest().body(error);
+	}
+	
+	
 	@ExceptionHandler(IdDuplicateException.class)
 	public ResponseEntity<?> handlerDuplicateId(IdDuplicateException e){
 		Map<String, String> error = new HashMap();

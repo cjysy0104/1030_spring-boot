@@ -1,0 +1,41 @@
+package com.kh.demo.board.model.service;
+
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.kh.demo.board.model.dto.BoardDTO;
+
+public class BoardServiceImpl implements BoardService {
+
+	@Override
+	public void save(BoardDTO board, MultipartFile file) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<BoardDTO> findAll(int pageNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BoardDTO findByBoardNo(Long boardNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BoardDTO update(BoardDTO board, MultipartFile file) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteByBoardNo(Long boardNo) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

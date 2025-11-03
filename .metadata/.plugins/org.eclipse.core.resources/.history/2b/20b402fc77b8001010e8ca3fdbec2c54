@@ -1,0 +1,20 @@
+package com.kh.demo.board.model.dto;
+
+import java.sql.Date;
+
+import lombok.Setter;
+
+@getter
+@Setter
+
+public class BoardDTO {
+
+	private Long boardNo;
+	private String boardTitle;
+	private String boardContent;
+	private String boardWriter;
+	private String fineURL;
+	private String status;
+	private Date createDate;
+	;
+}

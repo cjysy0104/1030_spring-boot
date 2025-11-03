@@ -1,0 +1,96 @@
+package com.kh.demo.configuration.filter;
+
+import java.io.IOException;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.kh.demo.auth.model.vo.CustomUserDetails;
+import com.kh.demo.token.util.JwtUtil;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+/*
+ * 추상클래스
+ * 
+ * 필드의 공유가 필요할 떄, 생성자가 필요할 떄, 공통 구현 로직이 많을 떄
+ * =>
+ * 다형성을 적용해야한다.
+ */
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class JwtFilter extends OncePerRequestFilter{
+	
+	private final JwtUtil jwtUtil;
+	private final UserDetailsService userDetailsService;
+//	private final List<String> permitPath = Arrays.asList(
+//			"/auth/login"
+//			);
+	
+	// 필터의 주요 로직을 구현하는 메서드, 요청이 들어올떄마다 호출됨
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+//		log.info("요청이 들어올떄 호출되는가?");
+		
+		String uri = request.getRequestURI();
+		log.info("요청 어케옴: {}", uri); // 잘된당
+		if(uri.equals("/auth/login")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+		
+		//토큰검증
+		String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+		
+		log.info("헤더에 포함된 Authorization: {}", authorization);
+		String token = authorization.split(" ")[1];
+		
+		log.info("토큰 값: {}", token);
+		// 1. 서버에서 관리하는 시크릿키로 만든게 맞는가?
+		// 2. 유효기간이 지나지 않았는가?
+		
+		try {
+			Claims claims = jwtUtil.parseJwt(token);
+			String username = claims.getSubject();
+			
+			log.info("토큰 소유쥬의 아이디 값: {}", username);
+			
+			CustomUserDetails user = 
+					(CustomUserDetails)userDetailsService.loadUserByUsername(username);
+			log.info("DB에서 조회해온 user 정보: {}", user);
+			UsernamePasswordAuthenticationToken authentication
+				= new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+			// 세부설정 관련 사용자의 IP주소, MAC주소, sessionID 등등을 포함시켜 세팅
+			
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			// 이렇게 담아주면 현재 요청이 만료될 떄까지 Authentication에 담겨져 있는 사용자의 정보를 사용할 수 있음.
+		} catch (ExpiredJwtException e) {
+			log.info("토큰 기한 만료");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.getWriter().write("토큰 만료");
+			return;
+		} catch (JwtException e) {
+			log.info("서버에서 만들어진 토큰 아님");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write("유효하지 않은 토큰");
+			return;
+		}
+	}
+
+}

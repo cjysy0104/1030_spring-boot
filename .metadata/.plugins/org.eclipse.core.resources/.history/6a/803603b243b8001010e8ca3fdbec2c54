@@ -1,0 +1,10 @@
+package com.kh.token.model.dao;
+
+import com.kh.token.model.vo.RefreshToken;
+
+@Mapper
+public interface TokenMapper {
+
+	@Insert("INSERT INTO BOOT_TOKEN VALUES(#{token}, #{username}, #{expiration})")
+	int saveToken(RefreshToken token);
+}

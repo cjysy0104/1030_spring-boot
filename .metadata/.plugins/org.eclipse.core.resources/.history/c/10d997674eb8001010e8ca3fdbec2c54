@@ -1,0 +1,30 @@
+package com.kh.demo.configuration.filter;
+
+import java.io.IOException;
+
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+/*
+ * 추상클래스
+ * 
+ * 필드의 공유가 필요할 떄, 생성자가 필요할 떄, 공통 구현 로직이 많을 떄
+ * =>
+ * 다형성을 적용해야한다.
+ */
+
+@Slf4j
+public class JwtFilter extends OncePerRequestFilter{
+	
+	// 필터의 주요 로직을 구현하는 메서드, 요청이 들어올떄마다 호출됨
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		log.info("요청이 들어올떄 호출되는가?");
+	}
+
+}

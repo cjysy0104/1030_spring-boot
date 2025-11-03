@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: start
+  datasource:
+    url: jdbc:oracle:thin:@115.90.212.20:10000:XE
+    username: CJY19
+    password: CJY191234
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+  mvc:
+    static-path-pattern: /uploads/**
+  web:
+    resources:
+      static-locations:file:uploads/
+  
+    
+servlet:
+  multipart:
+    max-file-size: 100MB
+    max-request-size: 100MB
+    
+    
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+jwt:
+  secret: H7oIaBujRo6fA/a0wdk09iY6STECQZbemMj8bcs5xBMzd0IYxzT+hNQd+fgXvsyz3qHF3DIwuYXUE9m7w5tkDw==
+
+server:
+  port: 8081
